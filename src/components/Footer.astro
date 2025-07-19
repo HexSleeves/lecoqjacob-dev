@@ -1,8 +1,28 @@
+---
+import { GLOBAL } from '../lib/variables';
+---
+
 <footer>
+  <div class="social-links">
+    {GLOBAL.githubProfile && (
+      <a href={GLOBAL.githubProfile} target="_blank" rel="noopener" aria-label="GitHub">
+        GitHub
+      </a>
+    )}
+    {GLOBAL.twitterProfile && (
+      <a href={GLOBAL.twitterProfile} target="_blank" rel="noopener" aria-label="Twitter">
+        Twitter
+      </a>
+    )}
+    {GLOBAL.linkedinProfile && (
+      <a href={GLOBAL.linkedinProfile} target="_blank" rel="noopener" aria-label="LinkedIn">
+        LinkedIn
+      </a>
+    )}
+  </div>
   <span>
-    &copy; {new Date().getFullYear()} Your Blog.
+    &copy; {new Date().getFullYear()} {GLOBAL.username}.
     Powered by <a href="https://astro.build" target="_blank" rel="noopener">Astro</a>.
-    Template by <a href="https://www.twitter.com/Charca" target="_blank" rel="noopener">Maxi Ferreira</a>.
   </span>
 </footer>
 
@@ -15,5 +35,22 @@
     padding: 1em 2em;
     text-align: center;
     width: 100%;
+  }
+
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5em;
+    margin-bottom: 1em;
+  }
+
+  .social-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .social-links a:hover {
+    color: var(--primary-color);
   }
 </style>

@@ -1,9 +1,10 @@
 ---
 import { getCollection } from 'astro:content'
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { GLOBAL } from '../../lib/variables';
 
-const title = 'Blog';
-const description = 'Latest articles.';
+const title = GLOBAL.blogTitle;
+const description = GLOBAL.blogShortDescription;
 const permalink = `${Astro.site.href}blog`;
 
 let allPosts = await getCollection('posts')
@@ -12,7 +13,7 @@ allPosts = allPosts.sort((a, b) => new Date(b.data.publishDate).valueOf() - new 
 
 <BaseLayout title={title} description={description} permalink={permalink} current="blog">
   <div class="container">
-    <h1>Blog</h1>
+    <h1>{GLOBAL.blogTitle}</h1>
     {allPosts.map((post, index) => {
       const href = `/blog/${post.data.slug}`;
       return (

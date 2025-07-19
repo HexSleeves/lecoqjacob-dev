@@ -1,8 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { GLOBAL } from '../lib/variables';
 
-const title = 'About';
-const description = 'About your blog.';
+const title = `About ${GLOBAL.username}`;
+const description = `Learn more about ${GLOBAL.username}, ${GLOBAL.shortDescription}`;
 const permalink = `${Astro.site.href}about`;
 ---
 
