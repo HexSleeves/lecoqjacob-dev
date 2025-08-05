@@ -1,16 +1,59 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { GLOBAL } from '../../lib/variables';
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { GLOBAL } from "../../lib/variables";
 
 const title = GLOBAL.projectTitle;
 const description = GLOBAL.projectShortDescription;
 const permalink = `${Astro.site.href}projects`;
+
+let allProjects = await getCollection("projects");
+allProjects = allProjects.sort((a, b) =>
+  a.data.title.localeCompare(b.data.title)
+);
 ---
 
-<BaseLayout title={title} description={description} permalink={permalink} current="projects">
+<BaseLayout
+  title={title}
+  description={description}
+  permalink={permalink}
+  current="projects"
+>
   <div class="container">
     <h1>{GLOBAL.projectTitle}</h1>
     <p>{GLOBAL.projectLongDescription}</p>
-    <p>{GLOBAL.noProjects}</p>
+    {
+      allProjects.length === 0 ? (
+        <p>{GLOBAL.noProjects}</p>
+      ) : (
+        allProjects.map((project, index) => {
+          const href = `/projects/${project.data.slug}`;
+          return (
+            <div>
+              {index !== 0 && <hr />}
+              <div class="project-item">
+                <h2>
+                  <a href={href} transition:name={`project-${project.data.slug}`}>
+                    {project.data.title}
+                  </a>
+                </h2>
+                <p>{project.data.description}</p>
+              </div>
+            </div>
+          );
+        })
+      )
+    }
   </div>
 </BaseLayout>
+
+<style>
+  h2 {
+    font-family: var(--font-family-sans);
+    font-weight: 700;
+  }
+
+  hr {
+    margin: 60px auto;
+  }
+</style>

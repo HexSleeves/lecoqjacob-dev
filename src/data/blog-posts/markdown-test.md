@@ -11,14 +11,24 @@ This page is an adapted version of [markdown-test-page](https://github.com/fullp
 
 ## <a name="top"></a> Table of Contents
 
-- [Headings](#Headings)
-- [Paragraphs](#Paragraphs)
-- [Blockquotes](#Blockquotes)
-- [Lists](#Lists)
-- [Horizontal rule](#Horizontal)
-- [Table](#Table)
-- [Code](#Code)
-- [Inline elements](#Inline)
+- [Headings](#headings)
+- [Heading one](#heading-one)
+  - [Heading two](#heading-two)
+    - [Heading three](#heading-three)
+      - [Heading four](#heading-four)
+        - [Heading five](#heading-five)
+          - [Heading six](#heading-six)
+- [Paragraphs](#paragraphs)
+- [Blockquotes](#blockquotes)
+- [Lists](#lists)
+    - [Ordered List](#ordered-list)
+    - [Unordered List](#unordered-list)
+- [Horizontal rule](#horizontal-rule)
+- [Table](#table)
+- [Code](#code)
+  - [Inline code](#inline-code)
+  - [Highlighted](#highlighted)
+- [Inline elements](#inline-elements)
 
 ---
 

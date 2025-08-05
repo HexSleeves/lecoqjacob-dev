@@ -2,14 +2,14 @@
 
 export const GLOBAL = {
   // Site metadata
-  username: "Jacob LeCoq",
+  username: "HexSleeves",
   rootUrl: "https://lecoqjacob.dev",
   shortDescription: "Fullstack Developer",
   longDescription:
     "Jacob LeCoq is a fullstack developer passionate about creating beautiful, performant web applications using modern technologies.",
 
   // Social media links
-  githubProfile: "https://github.com/lecoqjacob",
+  githubProfile: "https://github.com/HexSleeves",
   twitterProfile: "https://x.com/jacob_lecoq",
   linkedinProfile: "https://www.linkedin.com/in/jacob-lecoq",
 
