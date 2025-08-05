@@ -15,7 +15,13 @@ const projects = defineCollection({
   loader: glob({ pattern: "*.md", base: "./src/data/projects" }),
   schema: z.object({
     title: z.string(),
-    slug: z.string(),
+    description: z.string(),
+    tags: z.array(z.string()).optional(),
+    githubUrl: z.string().optional(),
+    liveUrl: z.string().optional(),
+    featured: z.boolean().optional(),
+    timestamp: z.string(),
+    filename: z.string(),
   }),
 });
 

@@ -8,8 +8,9 @@ const description = GLOBAL.projectShortDescription;
 const permalink = `${Astro.site.href}projects`;
 
 let allProjects = await getCollection("projects");
-allProjects = allProjects.sort((a, b) =>
-  a.data.title.localeCompare(b.data.title)
+allProjects = allProjects.sort(
+  (a, b) =>
+    new Date(b.data.timestamp).valueOf() - new Date(a.data.timestamp).valueOf()
 );
 ---
 
@@ -27,17 +28,42 @@ allProjects = allProjects.sort((a, b) =>
         <p>{GLOBAL.noProjects}</p>
       ) : (
         allProjects.map((project, index) => {
-          const href = `/projects/${project.data.slug}`;
+          const href = `/projects/${project.data.filename}`;
           return (
             <div>
               {index !== 0 && <hr />}
               <div class="project-item">
                 <h2>
-                  <a href={href} transition:name={`project-${project.data.slug}`}>
-                    {project.data.title}
-                  </a>
+                  <a href={href}>{project.data.title}</a>
                 </h2>
                 <p>{project.data.description}</p>
+                {project.data.tags && (
+                  <div class="project-tags">
+                    {project.data.tags.map((tag) => (
+                      <span class="tag">{tag}</span>
+                    ))}
+                  </div>
+                )}
+                <div class="project-links">
+                  {project.data.liveUrl && (
+                    <a
+                      href={project.data.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Live Demo
+                    </a>
+                  )}
+                  {project.data.githubUrl && (
+                    <a
+                      href={project.data.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      GitHub
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
           );
@@ -55,5 +81,41 @@ allProjects = allProjects.sort((a, b) =>
 
   hr {
     margin: 60px auto;
+  }
+
+  .project-tags {
+    margin: 0.5rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-family: var(--font-family-sans);
+    font-weight: 500;
+  }
+
+  .project-links {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+  }
+
+  .project-links a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-family: var(--font-family-sans);
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+  }
+
+  .project-links a:hover {
+    color: var(--text-main);
   }
 </style>
