@@ -2,7 +2,7 @@
 
 export const GLOBAL = {
   // Site metadata
-  username: "HexSleeves",
+  username: "Jacob",
   rootUrl: "https://lecoqjacob.dev",
   shortDescription: "Fullstack Developer",
   longDescription:

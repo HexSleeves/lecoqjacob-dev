@@ -5,16 +5,38 @@ import Bio from "../../components/Bio.astro";
 
 export async function getStaticPaths() {
   const projects = await getCollection("projects");
-  return projects.map((p) => ({
+  // Filter out draft projects in production, show all in development
+  const filteredProjects = projects.filter((project) => {
+    if (import.meta.env.DEV) {
+      return true; // Show all projects in development
+    }
+    return !project.data.draft; // Hide draft projects in production
+  });
+  return filteredProjects.map((p) => ({
     params: { slug: p.data.filename },
     props: { project: p },
   }));
 }
 
 const { project } = Astro.props;
-const { title, description, tags, githubUrl, liveUrl, timestamp, filename } =
-  project.data;
-const permalink = `${Astro.site.href}projects/${filename}`;
+const {
+  title,
+  description,
+  tags,
+  techStack,
+  githubUrl,
+  liveUrl,
+  publishDate,
+  images,
+  filename,
+} = project.data;
+
+const projectDate = publishDate;
+
+const permalink = Astro.site
+  ? new URL(`/projects/${filename}`, Astro.site).href
+  : `/projects/${filename}`;
+
 const { Content } = await render(project);
 ---
 
@@ -26,7 +48,17 @@ const { Content } = await render(project);
 >
   <header>
     <h1>{title}</h1>
-    <p class="project-meta">{new Date(timestamp).toLocaleDateString()}</p>
+    <p class="project-meta">{new Date(projectDate).toLocaleDateString()}</p>
+    {
+      techStack && (
+        <div class="project-tech-stack">
+          <span class="tech-label">Built with:</span>
+          {techStack.map((tech) => (
+            <span class="tech-tag">{tech}</span>
+          ))}
+        </div>
+      )
+    }
     {
       tags && (
         <div class="project-tags">
@@ -59,6 +91,15 @@ const { Content } = await render(project);
     </div>
     <hr />
   </header>
+  {
+    images && images.length > 0 && (
+      <div class="project-images">
+        {images.map((image) => (
+          <img src={image} alt={`${title} screenshot`} loading="lazy" />
+        ))}
+      </div>
+    )
+  }
   <div class="container">
     <article class="content">
       <Content />
@@ -85,6 +126,32 @@ const { Content } = await render(project);
     margin-bottom: 1rem;
   }
 
+  .project-tech-stack {
+    margin: 1rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .tech-label {
+    font-family: var(--font-family-sans);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .tech-tag {
+    background-color: var(--text-secondary);
+    color: var(--background-color);
+    padding: 0.3rem 0.7rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-family: var(--font-family-sans);
+    font-weight: 500;
+  }
+
   .project-tags {
     margin: 1rem 0;
     display: flex;
@@ -101,6 +168,27 @@ const { Content } = await render(project);
     font-size: 0.8rem;
     font-family: var(--font-family-sans);
     font-weight: 500;
+  }
+
+  .project-images {
+    max-width: 800px;
+    margin: 2rem auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    padding: 0 1rem;
+  }
+
+  .project-images img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+  }
+
+  .project-images img:hover {
+    transform: scale(1.02);
   }
 
   .project-links {

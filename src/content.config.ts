@@ -8,6 +8,7 @@ const posts = defineCollection({
     slug: z.string(),
     publishDate: z.union([z.string(), z.date()]),
     description: z.string(),
+    draft: z.boolean().optional(),
   }),
 });
 
@@ -16,11 +17,16 @@ const projects = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
+    excerpt: z.string().optional(),
     tags: z.array(z.string()).optional(),
+    techStack: z.array(z.string()).optional(),
     githubUrl: z.string().optional(),
     liveUrl: z.string().optional(),
     featured: z.boolean().optional(),
-    timestamp: z.string(),
+    publishDate: z.union([z.string(), z.date()]),
+    images: z.array(z.string()).optional(),
+    draft: z.boolean().optional(),
+    // Legacy field for backwards compatibility
     filename: z.string(),
   }),
 });

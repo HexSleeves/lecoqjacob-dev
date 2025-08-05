@@ -1,10 +1,11 @@
 ---
-layout: ../../layouts/ProjectLayout.astro
 title: Bevy Mudslide Vulkano
 description: Sand Fall with Compute Shaders in Rust
-tags: ["vulkano", "rust", "open-source"]
+excerpt: A real-time sand falling simulation using compute shaders in Rust with Bevy and Vulkano
+tags: ["simulation", "game-dev", "open-source"]
+techStack: ["Rust", "Bevy", "Vulkano", "Compute Shaders", "WGPU"]
 githubUrl: https://github.com/HexSleeves/bevy_mudslide_vulkano
-timestamp: "2023-04-22T02:00:00+00:00"
+publishDate: 2023-04-22
 featured: true
 filename: bevy_mudslide_vulkano
 ---

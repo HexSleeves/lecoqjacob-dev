@@ -1,10 +1,11 @@
 ---
-layout: ../../layouts/ProjectLayout.astro
 title: Echos In The Dark
 description: A modern, modular roguelike engine and game demo built in OCaml
-tags: ["ocaml", "game", "open-source"]
+excerpt: Turn-based roguelike with ECS architecture, procedural world generation, and functional programming patterns
+tags: ["roguelike", "game-engine", "open-source"]
+techStack: ["OCaml", "Raylib", "ECS", "Functional Programming", "Base Library"]
 githubUrl: https://github.com/HexSleeves/EchosInTheDark
-timestamp: "2025-05-12T02:39:03+00:00"
+publishDate: 2025-05-12
 featured: true
 filename: echos_in_the_dark
 ---

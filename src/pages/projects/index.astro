@@ -5,13 +5,23 @@ import { GLOBAL } from "../../lib/variables";
 
 const title = GLOBAL.projectTitle;
 const description = GLOBAL.projectShortDescription;
-const permalink = `${Astro.site.href}projects`;
+const permalink = Astro.site
+  ? new URL("/projects", Astro.site).href
+  : "/projects";
 
 let allProjects = await getCollection("projects");
-allProjects = allProjects.sort(
-  (a, b) =>
-    new Date(b.data.timestamp).valueOf() - new Date(a.data.timestamp).valueOf()
-);
+// Filter out draft projects in production, show all in development
+allProjects = allProjects.filter((project) => {
+  if (import.meta.env.DEV) {
+    return true; // Show all projects in development
+  }
+  return !project.data.draft; // Hide draft projects in production
+});
+allProjects = allProjects.sort((a, b) => {
+  const dateA = new Date(a.data.publishDate).valueOf();
+  const dateB = new Date(b.data.publishDate).valueOf();
+  return dateB - dateA;
+});
 ---
 
 <BaseLayout
@@ -36,7 +46,15 @@ allProjects = allProjects.sort(
                 <h2>
                   <a href={href}>{project.data.title}</a>
                 </h2>
-                <p>{project.data.description}</p>
+                <p>{project.data.excerpt || project.data.description}</p>
+                {project.data.techStack && (
+                  <div class="project-tech-stack">
+                    <span class="tech-label">Tech Stack:</span>
+                    {project.data.techStack.map((tech) => (
+                      <span class="tech-tag">{tech}</span>
+                    ))}
+                  </div>
+                )}
                 {project.data.tags && (
                   <div class="project-tags">
                     {project.data.tags.map((tag) => (
@@ -81,6 +99,31 @@ allProjects = allProjects.sort(
 
   hr {
     margin: 60px auto;
+  }
+
+  .project-tech-stack {
+    margin: 0.5rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .tech-label {
+    font-family: var(--font-family-sans);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .tech-tag {
+    background-color: var(--text-secondary);
+    color: var(--background-color);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-family: var(--font-family-sans);
+    font-weight: 500;
   }
 
   .project-tags {

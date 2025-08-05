@@ -1,117 +1,538 @@
 ---
+import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { GLOBAL } from "../lib/variables";
 
 const title = GLOBAL.username;
 const description = GLOBAL.longDescription;
-const permalink = Astro.site.href;
+const permalink = Astro.site ? new URL("/", Astro.site).href : "/";
+
+// Get featured projects and recent blog posts
+let featuredProjects = await getCollection("projects");
+featuredProjects = featuredProjects
+  .filter((project) => project.data.featured)
+  .sort(
+    (a, b) =>
+      new Date(b.data.publishDate).valueOf() -
+      new Date(a.data.publishDate).valueOf()
+  )
+  .slice(0, 3);
+
+let recentPosts = await getCollection("posts");
+recentPosts = recentPosts
+  .sort(
+    (a, b) =>
+      new Date(b.data.publishDate).valueOf() -
+      new Date(a.data.publishDate).valueOf()
+  )
+  .slice(0, 3);
+
+const skills = [
+  "TypeScript",
+  "JavaScript",
+  "React",
+  "Astro",
+  "Node.js",
+  "Python",
+  "Go",
+  "PostgreSQL",
+  "Docker",
+  "AWS",
+];
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink}>
-  <div class="home-container">
-    <div class="home-copy">
-      <h1>Welcome to {GLOBAL.username}</h1>
-      <p>{GLOBAL.shortDescription} - {GLOBAL.longDescription}</p>
-    </div>
-
-    <div class="hero-image-container">
-      <picture>
-        <source
-          srcset="/assets/home-illustration.webp"
-          media="(min-width: 600px)"
-        />
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">
+          Hey, I'm <span class="highlight">{GLOBAL.username}</span> 👋
+        </h1>
+        <p class="hero-description">{GLOBAL.longDescription}</p>
+        <div class="hero-cta">
+          <a href="/projects" class="cta-primary">View My Work</a>
+          <a href="/about" class="cta-secondary">About Me</a>
+        </div>
+      </div>
+      <div class="hero-image-container">
         <img
-          class="hero-image"
-          alt="Illustration of person reading a book"
-          src="/assets/home-illustration-small.webp"
-          width="550"
-          height="466"
+          class="profile-image"
+          alt="Profile picture"
+          src="/assets/profile-pic.webp"
+          width="200"
+          height="200"
         />
-      </picture>
-      <p class="caption">
-        Illustration by
-        <a
-          href="https://icons8.com/illustrations/author/5c07e68d82bcbc0092519bb6"
-          target="_blank"
-          rel="noopener">Icons 8</a
-        >
-        from
-        <a
-          href="https://icons8.com/illustrations"
-          target="_blank"
-          rel="noopener">Ouch!</a
-        >
-      </p>
+      </div>
     </div>
-  </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section class="skills-section">
+    <div class="container">
+      <h2>Technologies I Work With</h2>
+      <div class="skills-grid">
+        {skills.map((skill) => <span class="skill-tag">{skill}</span>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Projects Section -->
+  {
+    featuredProjects.length > 0 && (
+      <section class="featured-projects">
+        <div class="container">
+          <div class="section-header">
+            <h2>Featured Projects</h2>
+            <a href="/projects" class="view-all-link">
+              {GLOBAL.viewAll} →
+            </a>
+          </div>
+          <div class="projects-grid">
+            {featuredProjects.map((project) => (
+              <article class="project-card">
+                <div class="project-content">
+                  <h3>
+                    <a href={`/projects/${project.data.filename}`}>
+                      {project.data.title}
+                    </a>
+                  </h3>
+                  <p>{project.data.description}</p>
+                  {project.data.tags && (
+                    <div class="project-tags">
+                      {project.data.tags.slice(0, 3).map((tag) => (
+                        <span class="tag">{tag}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div class="project-links">
+                  {project.data.liveUrl && (
+                    <a
+                      href={project.data.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Live Demo
+                    </a>
+                  )}
+                  {project.data.githubUrl && (
+                    <a
+                      href={project.data.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      GitHub
+                    </a>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Recent Blog Posts Section -->
+  {
+    recentPosts.length > 0 && (
+      <section class="recent-posts">
+        <div class="container">
+          <div class="section-header">
+            <h2>Latest from the Blog</h2>
+            <a href="/blog" class="view-all-link">
+              {GLOBAL.viewAll} →
+            </a>
+          </div>
+          <div class="posts-grid">
+            {recentPosts.map((post) => (
+              <article class="post-card">
+                <div class="post-meta">
+                  {new Date(post.data.publishDate).toLocaleDateString()}
+                </div>
+                <h3>
+                  <a href={`/blog/${post.data.slug}`}>{post.data.title}</a>
+                </h3>
+                <p>{post.data.description}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Call to Action Section -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Let's Work Together</h2>
+        <p>
+          Interested in collaborating or have a project in mind? I'd love to
+          hear from you.
+        </p>
+        <div class="social-links">
+          {
+            GLOBAL.githubProfile && (
+              <a
+                href={GLOBAL.githubProfile}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                GitHub
+              </a>
+            )
+          }
+          {
+            GLOBAL.linkedinProfile && (
+              <a
+                href={GLOBAL.linkedinProfile}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                LinkedIn
+              </a>
+            )
+          }
+          {
+            GLOBAL.twitterProfile && (
+              <a
+                href={GLOBAL.twitterProfile}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Twitter
+              </a>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
-  .home-container {
+  /* Hero Section */
+  .hero {
+    padding: 4rem 2rem;
+    margin-bottom: 4rem;
+  }
+
+  .hero-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 4rem;
     align-items: center;
+  }
+
+  .hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    font-family: var(--font-family-sans);
+  }
+
+  .highlight {
+    color: var(--primary-color);
+    position: relative;
+  }
+
+  .hero-description {
+    font-size: 1.3rem;
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+    color: var(--text-secondary);
+  }
+
+  .hero-cta {
     display: flex;
-    flex: 1;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .cta-primary,
+  .cta-secondary {
+    padding: 0.8rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-family: var(--font-family-sans);
+    transition: all 0.3s ease;
+    border: 2px solid var(--primary-color);
+  }
+
+  .cta-primary {
+    background-color: var(--primary-color);
+    color: white;
+  }
+
+  .cta-primary:hover {
+    background-color: transparent;
+    color: var(--primary-color);
+  }
+
+  .cta-secondary {
+    background-color: transparent;
+    color: var(--primary-color);
+  }
+
+  .cta-secondary:hover {
+    background-color: var(--primary-color);
+    color: white;
+  }
+
+  .profile-image {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--primary-color);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Skills Section */
+  .skills-section {
+    padding: 4rem 2rem;
+    background-color: var(--background-secondary, rgba(84, 142, 155, 0.05));
+  }
+
+  .skills-section h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+    font-family: var(--font-family-sans);
+  }
+
+  .skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
     justify-content: center;
-    margin: 2em 0;
-    min-height: 400px;
+    max-width: 800px;
+    margin: 0 auto;
   }
 
-  .home-copy {
-    flex: 1;
-    padding: 0 1em;
+  .skill-tag {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    font-family: var(--font-family-sans);
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: transform 0.2s ease;
   }
 
-  .home-copy h1 {
-    font-weight: 700;
-    margin-bottom: 0.5em;
-    line-height: 1.3;
+  .skill-tag:hover {
+    transform: translateY(-2px);
   }
 
-  .home-copy p {
-    font-size: 1.4em;
+  /* Featured Projects Section */
+  .featured-projects,
+  .recent-posts {
+    padding: 4rem 2rem;
   }
 
-  .hero-image-container {
-    margin: 0 1em;
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .section-header h2 {
+    font-size: 2.5rem;
+    font-family: var(--font-family-sans);
+    margin: 0;
+  }
+
+  .view-all-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    font-family: var(--font-family-sans);
+    transition: color 0.2s ease;
+  }
+
+  .view-all-link:hover {
+    color: var(--text-main);
+  }
+
+  .projects-grid,
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+
+  .project-card,
+  .post-card {
+    background-color: var(--background-card, white);
+    border-radius: 12px;
+    padding: 2rem;
+    border: 1px solid var(--border-color, #e5e5e5);
+    transition: all 0.3s ease;
+  }
+
+  .project-card:hover,
+  .post-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .project-card h3,
+  .post-card h3 {
+    margin: 0 0 1rem 0;
+    font-family: var(--font-family-sans);
+  }
+
+  .project-card h3 a,
+  .post-card h3 a {
+    color: var(--text-main);
+    text-decoration: none;
+  }
+
+  .project-card h3 a:hover,
+  .post-card h3 a:hover {
+    color: var(--primary-color);
+  }
+
+  .project-content {
+    margin-bottom: 1.5rem;
+  }
+
+  .project-tags {
+    margin: 1rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-family: var(--font-family-sans);
+    font-weight: 500;
+  }
+
+  .project-links {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .project-links a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    font-family: var(--font-family-sans);
+    font-size: 0.9rem;
+  }
+
+  .post-meta {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-family: var(--font-family-sans);
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Call to Action Section */
+  .cta-section {
+    padding: 4rem 2rem;
+    background-color: var(--primary-color);
+    color: white;
     text-align: center;
   }
 
-  .hero-image-container picture {
-    display: block;
-    min-height: 250px;
+  .cta-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-family: var(--font-family-sans);
   }
 
-  .caption {
-    font-size: 0.8em;
-    font-style: italic;
-    text-align: left;
+  .cta-content p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
   }
 
-  .hero-image {
-    width: 100%;
-    max-width: 550px;
-    margin-bottom: 1em;
+  .social-links {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
   }
 
-  @media (max-width: 1200px) {
-    p {
-      font-size: 1.2em;
+  .social-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-family: var(--font-family-sans);
+    padding: 0.8rem 1.5rem;
+    border: 2px solid white;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .social-links a:hover {
+    background-color: white;
+    color: var(--primary-color);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .hero-content {
+      grid-template-columns: 1fr;
+      text-align: center;
+      gap: 2rem;
     }
 
-    .hero-image {
-      max-width: 400px;
+    .hero-title {
+      font-size: 2.5rem;
     }
-  }
 
-  @media (max-width: 800px) {
-    .home-container {
+    .hero-description {
+      font-size: 1.1rem;
+    }
+
+    .section-header {
+      text-align: center;
       flex-direction: column;
     }
 
-    .home-copy {
-      flex: 0;
-      padding-bottom: 2em;
-      text-align: center;
+    .section-header h2 {
+      font-size: 2rem;
     }
+
+    .projects-grid,
+    .posts-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero,
+    .skills-section,
+    .featured-projects,
+    .recent-posts,
+    .cta-section {
+      padding: 2rem 1rem;
+    }
+  }
+
+  /* Dark mode support */
+  :root.theme-dark {
+    --background-secondary: rgba(84, 142, 155, 0.1);
+    --background-card: #2a2a2a;
+    --border-color: #404040;
   }
 </style>

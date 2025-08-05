@@ -1,10 +1,11 @@
 ---
-layout: ../../layouts/ProjectLayout.astro
 title: Bevy Shader Playground
 description: A playground for learning and experimenting with shaders in Bevy
-tags: ["bevy", "rust", "open-source"]
+excerpt: Interactive tutorials and examples for learning compute shaders and rendering pipelines in Bevy
+tags: ["tutorial", "learning", "game-dev"]
+techStack: ["Rust", "Bevy", "WGSL", "Compute Shaders", "Graphics Programming"]
 githubUrl: https://github.com/HexSleeves/bevy_shader_playground
-timestamp: "2024-02-15T02:39:03+00:00"
+publishDate: 2024-02-15
 featured: true
 filename: bevy_shader_playground
 ---
