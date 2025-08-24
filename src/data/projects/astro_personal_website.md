@@ -1,11 +1,12 @@
 ---
 title: Personal Portfolio Website
+slug: astro-personal-website
 description: Modern personal website built with Astro, featuring blog functionality and project showcases
 excerpt: A fast, modern personal website showcasing projects and blog posts with excellent SEO and performance
 tags: ["portfolio", "website", "personal"]
 techStack: ["Astro", "TypeScript", "Svelte", "MDX", "CSS"]
-githubUrl: https://github.com/username/personal-website
-liveUrl: https://yourname.dev
+githubUrl: https://github.com/HexSleeves/lecoqjacob-dev
+liveUrl: https://hexsleeves.github.io/personal-website/
 featured: true
 publishDate: 2025-08-05
 images: [
@@ -13,7 +14,6 @@ images: [
   "/assets/projects/personal-website-blog.jpg",
   "/assets/projects/personal-website-projects.jpg"
 ]
-filename: astro_personal_website
 ---
 
 ## Project Overview

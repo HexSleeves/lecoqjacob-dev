@@ -1,21 +1,42 @@
 ---
 import { getCollection } from "astro:content";
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import { GLOBAL } from "../../lib/variables";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
 
-const title = GLOBAL.blogTitle;
-const description = GLOBAL.blogShortDescription;
-const permalink = `${Astro.site?.href}blog`;
+export async function getStaticPaths() {
+  const posts = await getCollection("posts");
+  const filteredPosts = posts.filter((post) => {
+    if (import.meta.env.DEV) {
+      return true;
+    }
+    return !post.data.draft;
+  });
 
-let allPosts = await getCollection("posts");
-// Filter out draft posts in production, show all in development
-allPosts = allPosts.filter(post => {
-  if (import.meta.env.DEV) {
-    return true; // Show all posts in development
-  }
-  return !post.data.draft; // Hide draft posts in production
-});
-allPosts = allPosts.sort(
+  const allTags = new Set<string>();
+  filteredPosts.forEach((post) => {
+    if (post.data.tags) {
+      post.data.tags.forEach((tag) => allTags.add(tag));
+    }
+  });
+
+  return Array.from(allTags).map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: filteredPosts.filter(
+        (post) => post.data.tags && post.data.tags.includes(tag)
+      ),
+    },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+const title = `Posts tagged "${tag}"`;
+const description = `All blog posts tagged with "${tag}"`;
+const permalink = Astro.site
+  ? new URL(`/blog/tags/${tag}`, Astro.site).href
+  : `/blog/tags/${tag}`;
+
+const sortedPosts = posts.sort(
   (a, b) =>
     new Date(b.data.publishDate).valueOf() -
     new Date(a.data.publishDate).valueOf()
@@ -29,9 +50,14 @@ allPosts = allPosts.sort(
   current="blog"
 >
   <div class="container">
-    <h1>{GLOBAL.blogTitle}</h1>
+    <h1>Posts tagged "{tag}"</h1>
+    <p>
+      Found {posts.length} post{posts.length !== 1 ? "s" : ""} with this tag.
+    </p>
+    <a href="/blog" class="back-link">← Back to all posts</a>
+
     {
-      allPosts.map((post, index) => {
+      sortedPosts.map((post, index) => {
         const href = `/blog/${post.data.slug}`;
         return (
           <div>
@@ -45,15 +71,19 @@ allPosts = allPosts.sort(
                 <div class="post-categories">
                   <span class="category-label">Categories:</span>
                   {post.data.categories.map((category) => (
-                    <a href={`/blog/categories/${category}`} class="category-tag">{category}</a>
+                    <span class="category-tag">{category}</span>
                   ))}
                 </div>
               )}
               {post.data.tags && (
                 <div class="post-tags">
-                  <span class="category-label">Tags:</span>
-                  {post.data.tags.map((tag) => (
-                    <a href={`/blog/tags/${tag}`} class="tag">{tag}</a>
+                  {post.data.tags.map((postTag) => (
+                    <a
+                      href={`/blog/tags/${postTag}`}
+                      class={`tag ${postTag === tag ? "current-tag" : ""}`}
+                    >
+                      {postTag}
+                    </a>
                   ))}
                 </div>
               )}
@@ -69,6 +99,10 @@ allPosts = allPosts.sort(
 </BaseLayout>
 
 <style>
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+
   h2,
   .post-item-footer {
     font-family: var(--font-family-sans);
@@ -80,6 +114,19 @@ allPosts = allPosts.sort(
     text-align: left;
     text-transform: uppercase;
     margin-right: 16px;
+  }
+
+  .back-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-family: var(--font-family-sans);
+    font-weight: 600;
+    margin-bottom: 2rem;
+    display: inline-block;
+  }
+
+  .back-link:hover {
+    text-decoration: underline;
   }
 
   hr {
@@ -109,12 +156,6 @@ allPosts = allPosts.sort(
     font-size: 0.75rem;
     font-family: var(--font-family-sans);
     font-weight: 500;
-    text-decoration: none;
-    transition: opacity 0.2s ease;
-  }
-
-  .category-tag:hover {
-    opacity: 0.8;
   }
 
   .post-tags {
@@ -138,5 +179,10 @@ allPosts = allPosts.sort(
 
   .tag:hover {
     opacity: 0.8;
+  }
+
+  .current-tag {
+    background-color: var(--text-secondary);
+    color: var(--background-color);
   }
 </style>

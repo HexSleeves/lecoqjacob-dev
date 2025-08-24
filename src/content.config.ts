@@ -8,6 +8,8 @@ const posts = defineCollection({
     slug: z.string(),
     publishDate: z.union([z.string(), z.date()]),
     description: z.string(),
+    tags: z.array(z.string()).optional(),
+    categories: z.array(z.string()).optional(),
     draft: z.boolean().optional(),
   }),
 });
@@ -16,6 +18,7 @@ const projects = defineCollection({
   loader: glob({ pattern: "*.md", base: "./src/data/projects" }),
   schema: z.object({
     title: z.string(),
+    slug: z.string(),
     description: z.string(),
     excerpt: z.string().optional(),
     tags: z.array(z.string()).optional(),
@@ -26,8 +29,6 @@ const projects = defineCollection({
     publishDate: z.union([z.string(), z.date()]),
     images: z.array(z.string()).optional(),
     draft: z.boolean().optional(),
-    // Legacy field for backwards compatibility
-    filename: z.string(),
   }),
 });
 

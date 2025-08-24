@@ -1,21 +1,43 @@
 ---
 import { getCollection } from "astro:content";
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import { GLOBAL } from "../../lib/variables";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
 
-const title = GLOBAL.blogTitle;
-const description = GLOBAL.blogShortDescription;
-const permalink = `${Astro.site?.href}blog`;
+export async function getStaticPaths() {
+  const posts = await getCollection("posts");
+  const filteredPosts = posts.filter((post) => {
+    if (import.meta.env.DEV) {
+      return true;
+    }
+    return !post.data.draft;
+  });
 
-let allPosts = await getCollection("posts");
-// Filter out draft posts in production, show all in development
-allPosts = allPosts.filter(post => {
-  if (import.meta.env.DEV) {
-    return true; // Show all posts in development
-  }
-  return !post.data.draft; // Hide draft posts in production
-});
-allPosts = allPosts.sort(
+  const allCategories = new Set<string>();
+  filteredPosts.forEach((post) => {
+    if (post.data.categories) {
+      post.data.categories.forEach((category) => allCategories.add(category));
+    }
+  });
+
+  return Array.from(allCategories).map((category) => ({
+    params: { category },
+    props: {
+      category,
+      posts: filteredPosts.filter(
+        (post) =>
+          post.data.categories && post.data.categories.includes(category)
+      ),
+    },
+  }));
+}
+
+const { category, posts } = Astro.props;
+const title = `Posts in "${category}" category`;
+const description = `All blog posts in the "${category}" category`;
+const permalink = Astro.site
+  ? new URL(`/blog/categories/${category}`, Astro.site).href
+  : `/blog/categories/${category}`;
+
+const sortedPosts = posts.sort(
   (a, b) =>
     new Date(b.data.publishDate).valueOf() -
     new Date(a.data.publishDate).valueOf()
@@ -29,9 +51,14 @@ allPosts = allPosts.sort(
   current="blog"
 >
   <div class="container">
-    <h1>{GLOBAL.blogTitle}</h1>
+    <h1>Posts in "{category}" category</h1>
+    <p>
+      Found {posts.length} post{posts.length !== 1 ? "s" : ""} in this category.
+    </p>
+    <a href="/blog" class="back-link">← Back to all posts</a>
+
     {
-      allPosts.map((post, index) => {
+      sortedPosts.map((post, index) => {
         const href = `/blog/${post.data.slug}`;
         return (
           <div>
@@ -44,8 +71,13 @@ allPosts = allPosts.sort(
               {post.data.categories && (
                 <div class="post-categories">
                   <span class="category-label">Categories:</span>
-                  {post.data.categories.map((category) => (
-                    <a href={`/blog/categories/${category}`} class="category-tag">{category}</a>
+                  {post.data.categories.map((postCategory) => (
+                    <a
+                      href={`/blog/categories/${postCategory}`}
+                      class={`category-tag ${postCategory === category ? "current-category" : ""}`}
+                    >
+                      {postCategory}
+                    </a>
                   ))}
                 </div>
               )}
@@ -53,7 +85,9 @@ allPosts = allPosts.sort(
                 <div class="post-tags">
                   <span class="category-label">Tags:</span>
                   {post.data.tags.map((tag) => (
-                    <a href={`/blog/tags/${tag}`} class="tag">{tag}</a>
+                    <a href={`/blog/tags/${tag}`} class="tag">
+                      {tag}
+                    </a>
                   ))}
                 </div>
               )}
@@ -69,6 +103,10 @@ allPosts = allPosts.sort(
 </BaseLayout>
 
 <style>
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+
   h2,
   .post-item-footer {
     font-family: var(--font-family-sans);
@@ -80,6 +118,19 @@ allPosts = allPosts.sort(
     text-align: left;
     text-transform: uppercase;
     margin-right: 16px;
+  }
+
+  .back-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-family: var(--font-family-sans);
+    font-weight: 600;
+    margin-bottom: 2rem;
+    display: inline-block;
+  }
+
+  .back-link:hover {
+    text-decoration: underline;
   }
 
   hr {
@@ -115,6 +166,11 @@ allPosts = allPosts.sort(
 
   .category-tag:hover {
     opacity: 0.8;
+  }
+
+  .current-category {
+    background-color: var(--primary-color);
+    color: white;
   }
 
   .post-tags {

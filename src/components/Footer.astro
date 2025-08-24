@@ -1,35 +1,60 @@
 ---
-import { GLOBAL } from '../lib/variables';
+import { GLOBAL } from "../lib/variables";
 ---
 
 <footer>
   <div class="social-links">
-    {GLOBAL.githubProfile && (
-      <a href={GLOBAL.githubProfile} target="_blank" rel="noopener" aria-label="GitHub">
-        GitHub
-      </a>
-    )}
-    {GLOBAL.twitterProfile && (
-      <a href={GLOBAL.twitterProfile} target="_blank" rel="noopener" aria-label="Twitter">
-        Twitter
-      </a>
-    )}
-    {GLOBAL.linkedinProfile && (
-      <a href={GLOBAL.linkedinProfile} target="_blank" rel="noopener" aria-label="LinkedIn">
-        LinkedIn
-      </a>
-    )}
+    {
+      GLOBAL.githubProfile && (
+        <a
+          href={GLOBAL.githubProfile}
+          target="_blank"
+          rel="noopener"
+          aria-label="GitHub"
+        >
+          GitHub
+        </a>
+      )
+    }
+    {
+      GLOBAL.twitterProfile && (
+        <a
+          href={GLOBAL.twitterProfile}
+          target="_blank"
+          rel="noopener"
+          aria-label="Twitter"
+        >
+          Twitter
+        </a>
+      )
+    }
+    {
+      GLOBAL.linkedinProfile && (
+        <a
+          href={GLOBAL.linkedinProfile}
+          target="_blank"
+          rel="noopener"
+          aria-label="LinkedIn"
+        >
+          LinkedIn
+        </a>
+      )
+    }
   </div>
   <span>
-    &copy; {new Date().getFullYear()} {GLOBAL.username}.
-    Powered by <a href="https://astro.build" target="_blank" rel="noopener">Astro</a>.
+    &copy; {new Date().getFullYear()}
+    {GLOBAL.username}. Powered by <a
+      href="https://astro.build"
+      target="_blank"
+      rel="noopener">Astro</a
+    >.
   </span>
 </footer>
 
 <style>
   footer {
     color: var(--text-secondary);
-    font-size: .8em;
+    font-size: 0.8em;
     margin: 1em auto;
     max-width: 1400px;
     padding: 1em 2em;

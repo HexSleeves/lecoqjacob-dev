@@ -20,7 +20,7 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { title, slug, description, publishDate } = post.data;
+const { title, slug, description, publishDate, tags, categories } = post.data;
 
 const readingTimeEstimate = readingTime(post.body ?? "").text;
 const permalink = Astro.site
@@ -39,6 +39,21 @@ const { Content } = await render(post);
   <header>
     <p>{publishDate} ~ {readingTimeEstimate}</p>
     <h1>{title}</h1>
+    {categories && (
+      <div class="post-categories">
+        <span class="category-label">Categories:</span>
+        {categories.map((category) => (
+          <a href={`/blog/categories/${category}`} class="category-tag">{category}</a>
+        ))}
+      </div>
+    )}
+    {tags && (
+      <div class="post-tags">
+        {tags.map((tag) => (
+          <a href={`/blog/tags/${tag}`} class="tag">{tag}</a>
+        ))}
+      </div>
+    )}
     <hr />
   </header>
   <div class="container">
@@ -69,5 +84,61 @@ const { Content } = await render(post);
   header hr {
     min-width: 100px;
     width: 30%;
+  }
+
+  .post-categories {
+    margin: 1rem 0 0.5rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .category-label {
+    font-family: var(--font-family-sans);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .category-tag {
+    background-color: var(--text-secondary);
+    color: var(--background-color);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-family: var(--font-family-sans);
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .category-tag:hover {
+    opacity: 0.8;
+  }
+
+  .post-tags {
+    margin: 0.5rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-family: var(--font-family-sans);
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .tag:hover {
+    opacity: 0.8;
   }
 </style>

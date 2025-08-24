@@ -1,5 +1,6 @@
 ---
 title: Bevy Shader Playground
+slug: bevy-shader-playground
 description: A playground for learning and experimenting with shaders in Bevy
 excerpt: Interactive tutorials and examples for learning compute shaders and rendering pipelines in Bevy
 tags: ["tutorial", "learning", "game-dev"]
@@ -7,7 +8,6 @@ techStack: ["Rust", "Bevy", "WGSL", "Compute Shaders", "Graphics Programming"]
 githubUrl: https://github.com/HexSleeves/bevy_shader_playground
 publishDate: 2024-02-15
 featured: true
-filename: bevy_shader_playground
 ---
 
 ## The Details

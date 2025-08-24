@@ -1,7 +1,7 @@
 ---
-import ThemeToggleButton from './ThemeToggleButton.svelte';
-import { GLOBAL } from '../lib/variables';
-const { current = '' } = Astro.props;
+import ThemeToggleButton from "./ThemeToggleButton.svelte";
+import { GLOBAL } from "../lib/variables";
+const { current = "" } = Astro.props;
 ---
 
 <style>
@@ -31,9 +31,9 @@ const { current = '' } = Astro.props;
   }
 
   a::before {
-    content: '';
+    content: "";
     position: absolute;
-    transition: transform .3s ease;
+    transition: transform 0.3s ease;
     left: 0;
     bottom: 0;
     width: 100%;
@@ -60,14 +60,20 @@ const { current = '' } = Astro.props;
       margin-right: 1em;
     }
   }
-
 </style>
 
 <nav>
   <a class={current === "" ? "selected" : ""} href={GLOBAL.menu.home}>home</a>
-  <a class={current === "about" ? "selected" : ""} href={GLOBAL.menu.about}>about</a>
-  <a class={current === "projects" ? "selected" : ""} href={GLOBAL.menu.projects}>projects</a>
-  <a class={current === "blog" ? "selected" : ""} href={GLOBAL.menu.blog}>blog</a>
+  <a class={current === "about" ? "selected" : ""} href={GLOBAL.menu.about}
+    >about</a
+  >
+  <a
+    class={current === "projects" ? "selected" : ""}
+    href={GLOBAL.menu.projects}>projects</a
+  >
+  <a class={current === "blog" ? "selected" : ""} href={GLOBAL.menu.blog}
+    >blog</a
+  >
   <div class="theme-toggle-container">
     <ThemeToggleButton client:load />
   </div>

@@ -38,7 +38,7 @@ allProjects = allProjects.sort((a, b) => {
         <p>{GLOBAL.noProjects}</p>
       ) : (
         allProjects.map((project, index) => {
-          const href = `/projects/${project.data.filename}`;
+          const href = `/projects/${project.data.slug}`;
           return (
             <div>
               {index !== 0 && <hr />}

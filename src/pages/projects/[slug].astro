@@ -13,7 +13,7 @@ export async function getStaticPaths() {
     return !project.data.draft; // Hide draft projects in production
   });
   return filteredProjects.map((p) => ({
-    params: { slug: p.data.filename },
+    params: { slug: p.data.slug },
     props: { project: p },
   }));
 }
@@ -28,14 +28,14 @@ const {
   liveUrl,
   publishDate,
   images,
-  filename,
+  slug,
 } = project.data;
 
 const projectDate = publishDate;
 
 const permalink = Astro.site
-  ? new URL(`/projects/${filename}`, Astro.site).href
-  : `/projects/${filename}`;
+  ? new URL(`/projects/${slug}`, Astro.site).href
+  : `/projects/${slug}`;
 
 const { Content } = await render(project);
 ---

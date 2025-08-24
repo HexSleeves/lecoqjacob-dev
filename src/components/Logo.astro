@@ -4,6 +4,22 @@
     width: 75px;
   }
 
+  .logo-dark {
+    display: block;
+  }
+
+  .logo-light {
+    display: none;
+  }
+
+  [data-theme="light"] .logo-dark {
+    display: none;
+  }
+
+  [data-theme="light"] .logo-light {
+    display: block;
+  }
+
   @media screen and (max-width: 520px) {
     img {
       display: none;
@@ -12,5 +28,18 @@
 </style>
 
 <a href="/">
-  <img alt="Blog Logo" src="/assets/logo.webp" width="75" height="50" />
+  <img
+    class="logo-dark"
+    alt="Blog Logo"
+    src="/assets/hexsleeves_glow_cyan_512.webp"
+    width="75"
+    height="50"
+  />
+  <img
+    class="logo-light"
+    alt="Blog Logo"
+    src="/assets/hexsleeves_base_512.webp"
+    width="75"
+    height="50"
+  />
 </a>
